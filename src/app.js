@@ -1,7 +1,12 @@
-import express from "express"
+import express from "express";
+// import "dotenv/config"
 
-const app = express()
+import { categoriesRoutes } from "./routers/categoriesRoutes";
 
-app.use(express.json())
+const app = express();
 
-export default app
+app.use(express.json());
+
+app.use("/categories", categoriesRoutes);
+
+export default app;

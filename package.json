@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon ./src/server.js",
     "actions": "cross-env NODE_ENV=test DB_USER=kenzie DB_PASSWORD=kenzie jest --forceExit",
-    "test": "cross-env NODE_ENV=test DB_USER=seu-usuário DB_PASSWORD=sua-senha jest --verbose --forceExit"
+    "test": "cross-env NODE_ENV=test DB_USER=elton DB_PASSWORD=726352 jest --verbose --forceExit"
   },
   "dependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.17.9",
@@ -17,5 +17,9 @@
     "jest": "^28.0.2",
     "pg": "^8.8.0",
     "supertest": "^6.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.19",
+    "sucrase": "3.26.0"
   }
 }
