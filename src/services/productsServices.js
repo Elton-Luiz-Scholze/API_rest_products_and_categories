@@ -1,4 +1,5 @@
 import database from "../database"
+import { returnProductData } from "../schemas/productsSchemas";
 
 const listProductsService = async () => {
     const queryResponse = await database.query(
@@ -9,22 +10,11 @@ const listProductsService = async () => {
         ;`
     );
 
-    return [200, queryResponse.rows];
+    return queryResponse.rows;
 }
 
 const createProductsService = async (productData) => {
-    const { name, price, category } = productData;
-
-    const queryId = await database.query(
-        `SELECT
-            id
-        FROM
-            categories
-        WHERE
-            categories.name = '${category}'`
-    );
-
-    const { id } = queryId.rows[0];
+    const { name, price, category_id } = productData;
 
     const queryResponse = await database.query(
         `INSERT INTO
@@ -32,10 +22,14 @@ const createProductsService = async (productData) => {
         VALUES
             ($1, $2, $3)
         RETURNING *;`,
-        [name, price, id]
+        [name, price, category_id]
     );
 
-    return [201, queryResponse.rows];
+    const returnProduct = await returnProductData.validate(queryResponse.rows[0], {
+        stripUnknown: true
+    })
+
+    return returnProduct;
 }
 
 export { listProductsService, createProductsService };

@@ -1,15 +1,22 @@
-import { createCategoriesService, listCategoriesService } from "../services/categoriesServices";
+import { createCategoriesService, listCategoriesService, listCategoryByIdService } from "../services/categoriesServices";
 
 const listCategoriesController = async (req, res) => {
-    const [status, data] = await listCategoriesService();
+    const data = await listCategoriesService();
 
-    return res.status(status).json(data);
+    return res.status(200).json(data);
 }
 
 const createCategoriesController = async (req, res) => {
-    const [status, data] = await createCategoriesService(req.body);
+    const data = await createCategoriesService(req.validatedBody);
 
-    return res.status(status).json(data);
+    return res.status(201).json(data);
 }
 
-export { listCategoriesController, createCategoriesController };
+const listCategoryByIdController = async (req, res) => {
+    const id = req.params.id;
+    const data = await listCategoryByIdService(id);
+
+    return res.status(200).json(data);
+}
+
+export { listCategoriesController, createCategoriesController, listCategoryByIdController };

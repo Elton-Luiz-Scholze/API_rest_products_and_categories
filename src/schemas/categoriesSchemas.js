@@ -1,12 +1,12 @@
 import * as yup from "yup";
 
 const createCategorieSchema = yup.object().shape({
-    name: yup.string().trim().lowercase().max(200).required()
+    name: yup.string().trim().max(200).required()
 });
 
 const returnCategoryData = yup.object().shape({
-    id: yup.number().required(),
-    name: yup.string().trim().lowercase().max(200).required()
+    id: yup.number(),
+    name: yup.string().trim().max(200)
 });
 
-return { createCategorieSchema, returnCategoryData };
+export { createCategorieSchema, returnCategoryData };

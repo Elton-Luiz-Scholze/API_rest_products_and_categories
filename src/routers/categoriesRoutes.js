@@ -1,10 +1,13 @@
 import { Router } from "express";
-import { createCategoriesController, listCategoriesController } from "../controllers/categoriesControllers";
+import { createCategoriesController, listCategoriesController, listCategoryByIdController } from "../controllers/categoriesControllers";
+import { verifyDataMiddleware } from "../middlewares/verifyDataMiddleware";
+import { createCategorieSchema } from "../schemas/categoriesSchemas";
 
 const categoriesRoutes = Router();
 
 categoriesRoutes.get("", listCategoriesController);
-categoriesRoutes.post("", createCategoriesController);
+categoriesRoutes.post("", verifyDataMiddleware(createCategorieSchema), createCategoriesController);
+categoriesRoutes.get("/:id", listCategoryByIdController);
 
 
 export { categoriesRoutes };
