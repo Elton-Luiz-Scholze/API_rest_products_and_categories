@@ -85,4 +85,30 @@ const listProductsByCategoryIdService = async (id) => {
     return queryResponse.rows;
 }
 
-export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService };
+const updateProductService = async (id, productData) => {
+    let query = `UPDATE 
+                    products
+                SET `;
+    
+    const keys = Object.keys(productData);
+    const values = Object.values(productData);
+    
+    keys.forEach((key, index) => {
+        query += `${key} = \$${index+=1}, `
+    });
+
+    query = query.slice(0, -2)
+
+    query += `WHERE id = \$${keys.length+=1} RETURNING *;`
+
+    const queryResponse = await database.query(
+        query,
+        [...values, id]
+    );
+
+    const validatedData = await returnProductData.validate(queryResponse.rows[0]);
+    
+    return validatedData;
+}
+
+export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService, updateProductService };
