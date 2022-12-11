@@ -9,7 +9,7 @@ productsRoutes.get("", listProductsController);
 productsRoutes.post("", verifyDataMiddleware(createProductSchema), createProductsController);
 productsRoutes.get("/:id", listProductByIdController);
 productsRoutes.delete("/:id", deleteProductsController);
-productsRoutes.get("/:id", listProductsByCategoryIdController);
+productsRoutes.get("/category/:id", listProductsByCategoryIdController);
 
 
 export { productsRoutes };

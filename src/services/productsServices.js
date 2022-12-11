@@ -1,4 +1,5 @@
 import database from "../database"
+import { AppError } from "../errors";
 import { returnProductData } from "../schemas/productsSchemas";
 
 const listProductsService = async () => {
@@ -70,24 +71,18 @@ const deleteProductsService = async (id) => {
 const listProductsByCategoryIdService = async (id) => {
     const queryResponse = await database.query(
         `SELECT 
-            prod.name, prod.price, cat.name
+            prod.name, prod.price, cat.name as category
         FROM
             products prod
         JOIN
             categories cat
         ON
-            cat.id = prod.category_id
-        WHERE
             prod.category_id = $1
-        GROUprod BY
-            prod.name,
-            prod.price,
-            cat.name
         ;`,
         [id]
     );
 
-    return queryResponse.rows[0];
+    return queryResponse.rows;
 }
 
 export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService };
