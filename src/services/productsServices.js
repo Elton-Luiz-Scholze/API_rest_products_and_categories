@@ -32,22 +32,8 @@ const createProductsService = async (productData) => {
     return returnProduct;
 }
 
-const listProductByIdServices = async (id) => {
-    const queryResponse = await database.query(
-        `SELECT
-            *
-        FROM
-            products
-        WHERE
-            id = $1
-        ;`,
-        [id]
-    );
-    if(!queryResponse) {
-        throw new AppError(404, "Category not exist");
-    }
-
-    const returnProduct = await returnProductData.validate(queryResponse.rows[0], {
+const listProductByIdServices = async (queryResponse) => {
+    const returnProduct = await returnProductData.validate(queryResponse, {
         stripUnknown: true
     })
 
@@ -70,24 +56,44 @@ const deleteProductsService = async (id) => {
 const listProductsByCategoryIdService = async (id) => {
     const queryResponse = await database.query(
         `SELECT 
-            prod.name, prod.price, cat.name
+            prod.name, prod.price, cat.name as category
         FROM
             products prod
         JOIN
             categories cat
         ON
-            cat.id = prod.category_id
-        WHERE
             prod.category_id = $1
-        GROUprod BY
-            prod.name,
-            prod.price,
-            cat.name
         ;`,
         [id]
     );
 
-    return queryResponse.rows[0];
+    return queryResponse.rows;
 }
 
-export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService };
+const updateProductService = async (id, productData) => {
+    let query = `UPDATE 
+                    products
+                SET `;
+    
+    const keys = Object.keys(productData);
+    const values = Object.values(productData);
+    
+    keys.forEach((key, index) => {
+        query += `${key} = \$${index+=1}, `
+    });
+
+    query = query.slice(0, -2)
+
+    query += `WHERE id = \$${keys.length+=1} RETURNING *;`
+
+    const queryResponse = await database.query(
+        query,
+        [...values, id]
+    );
+
+    const validatedData = await returnProductData.validate(queryResponse.rows[0]);
+    
+    return validatedData;
+}
+
+export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService, updateProductService };
