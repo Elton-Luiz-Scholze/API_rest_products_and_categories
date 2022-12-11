@@ -1,5 +1,4 @@
 import database from "../database"
-import { AppError } from "../errors";
 import { returnProductData } from "../schemas/productsSchemas";
 
 const listProductsService = async () => {
@@ -33,22 +32,8 @@ const createProductsService = async (productData) => {
     return returnProduct;
 }
 
-const listProductByIdServices = async (id) => {
-    const queryResponse = await database.query(
-        `SELECT
-            *
-        FROM
-            products
-        WHERE
-            id = $1
-        ;`,
-        [id]
-    );
-    if(!queryResponse) {
-        throw new AppError(404, "Category not exist");
-    }
-
-    const returnProduct = await returnProductData.validate(queryResponse.rows[0], {
+const listProductByIdServices = async (queryResponse) => {
+    const returnProduct = await returnProductData.validate(queryResponse, {
         stripUnknown: true
     })
 

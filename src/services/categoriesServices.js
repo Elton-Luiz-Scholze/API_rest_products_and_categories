@@ -1,5 +1,4 @@
 import database from "../database"
-import { AppError } from "../errors";
 import { returnCategoryData } from "../schemas/categoriesSchemas";
 
 const listCategoriesService = async () => {
@@ -17,21 +16,6 @@ const listCategoriesService = async () => {
 const createCategoriesService = async (categoryData) => {
     const { name } = categoryData;
 
-    const findCategory = await database.query(
-        `SELECT
-            *
-        FROM
-            categories
-        WHERE
-            name = $1
-        ;`,
-        [name]
-    );
-    
-    if(findCategory.rowCount > 0) {
-        throw new AppError(400, "Category already exists");
-    }
-
     const queryResponse = await database.query(
         `INSERT INTO
             categories (name)
@@ -48,23 +32,8 @@ const createCategoriesService = async (categoryData) => {
     return returnCategory;
 }
 
-const listCategoryByIdService = async (id) => {
-    const queryResponse = await database.query(
-        `SELECT
-            *
-        FROM
-            categories
-        WHERE
-            id = $1
-        ;`,
-        [id]
-    );
-        
-    if(!queryResponse) {
-        throw new AppError(400, "Category not exist");
-    }
-
-    return queryResponse.rows[0];
+const listCategoryByIdService = async (queryResponse) => {
+    return queryResponse;
 }
 
 const deleteCategoryService = async (id) => {
@@ -80,4 +49,32 @@ const deleteCategoryService = async (id) => {
     return {};
 }
 
-export { listCategoriesService, createCategoriesService, listCategoryByIdService, deleteCategoryService };
+const updateCategoryService = async (id, categoryData) => {
+    let query = `UPDATE 
+                    categories 
+                SET `;
+    
+    const keys = Object.keys(categoryData);
+    const values = Object.values(categoryData);
+    
+    keys.forEach((key, index) => {
+        query += `${key} = \$${index+=1}, `
+    });
+
+    query = query.slice(0, -2);
+
+    query += `WHERE 
+                id = \$${keys.length+=1} 
+            RETURNING * ;`
+
+    const queryResponse = await database.query(
+        query,
+        [...values, id]
+    );
+
+    const validatedData = await returnCategoryData.validate(queryResponse.rows[0]);
+    
+    return validatedData;
+}
+
+export { listCategoriesService, createCategoriesService, listCategoryByIdService, deleteCategoryService, updateCategoryService };

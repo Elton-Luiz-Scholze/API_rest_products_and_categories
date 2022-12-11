@@ -13,8 +13,7 @@ const createProductsController = async (req, res) => {
 }
 
 const listProductByIdController = async (req, res) => {
-    const id = req.params.id;
-    const data = await listProductByIdServices(id);
+    const data = await listProductByIdServices(req.query);
 
     return res.status(200).json(data);
 }
