@@ -67,4 +67,17 @@ const listCategoryByIdService = async (id) => {
     return queryResponse.rows[0];
 }
 
-export { listCategoriesService, createCategoriesService, listCategoryByIdService };
+const deleteCategoryService = async (id) => {
+    const queryResponse = await database.query(
+        `DELETE FROM
+            categories
+        WHERE
+            id = $1
+        ;`,
+        [id]
+    );
+    
+    return {};
+}
+
+export { listCategoriesService, createCategoriesService, listCategoryByIdService, deleteCategoryService };

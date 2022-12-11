@@ -1,4 +1,4 @@
-import { createProductsService, listProductByIdServices, listProductsService } from "../services/productsServices";
+import { createProductsService, deleteProductsService, listProductByIdServices, listProductsByCategoryIdService, listProductsService } from "../services/productsServices";
 
 const listProductsController = async (req, res) => {
     const data = await listProductsService();
@@ -19,4 +19,18 @@ const listProductByIdController = async (req, res) => {
     return res.status(200).json(data);
 }
 
-export { listProductsController, createProductsController, listProductByIdController };
+const deleteProductsController = async (req, res) => {
+    const id = req.params.id;
+    const data = await deleteProductsService(id);
+
+    return res.status(204).json(data);
+}
+
+const listProductsByCategoryIdController = async (req, res) => {
+    const id = req.params.id;
+    const data = await listProductsByCategoryIdService(id);
+
+    return res.status(200).json(data);
+}
+
+export { listProductsController, createProductsController, listProductByIdController, deleteProductsController, listProductsByCategoryIdController };

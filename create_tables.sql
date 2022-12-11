@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS products (
 	name varchar(200) NOT NULL,
 	price DECIMAL(8,2) NOT NULL,
 	category_id INTEGER,
-	FOREIGN KEY (category_id) REFERENCES categories(id)
+	FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 

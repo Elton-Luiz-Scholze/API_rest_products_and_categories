@@ -54,4 +54,40 @@ const listProductByIdServices = async (id) => {
     return returnProduct;
 }
 
-export { listProductsService, createProductsService, listProductByIdServices };
+const deleteProductsService = async (id) => {
+    const queryResponse = await database.query(
+        `DELETE FROM
+            products
+        WHERE
+            id = $1
+        ;`,
+        [id]
+    );
+
+    return {};
+}
+
+const listProductsByCategoryIdService = async (id) => {
+    const queryResponse = await database.query(
+        `SELECT 
+            prod.name, prod.price, cat.name
+        FROM
+            products prod
+        JOIN
+            categories cat
+        ON
+            cat.id = prod.category_id
+        WHERE
+            prod.category_id = $1
+        GROUprod BY
+            prod.name,
+            prod.price,
+            cat.name
+        ;`,
+        [id]
+    );
+
+    return queryResponse.rows[0];
+}
+
+export { listProductsService, createProductsService, listProductByIdServices, deleteProductsService, listProductsByCategoryIdService };
