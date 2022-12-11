@@ -32,4 +32,26 @@ const createProductsService = async (productData) => {
     return returnProduct;
 }
 
-export { listProductsService, createProductsService };
+const listProductByIdServices = async (id) => {
+    const queryResponse = await database.query(
+        `SELECT
+            *
+        FROM
+            products
+        WHERE
+            id = $1
+        ;`,
+        [id]
+    );
+    if(!queryResponse) {
+        throw new AppError(404, "Category not exist");
+    }
+
+    const returnProduct = await returnProductData.validate(queryResponse.rows[0], {
+        stripUnknown: true
+    })
+
+    return returnProduct;
+}
+
+export { listProductsService, createProductsService, listProductByIdServices };
